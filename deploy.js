@@ -1,12 +1,12 @@
 require('dotenv').config();
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 const Web3 = require('web3');
-const { interface, bytecode } = require('./compile');
+const { abi, evm } = require('./compile');
 
 
 const provider = new HDWalletProvider(
   process.env.PRIVATE_KEY,
-  'https://rinkeby.infura.io/v3/7f1c03c7ed694d4992e47d47a44083b4'
+  process.env.INFURA_URL
 );
 
 const web3 = new Web3(provider);
@@ -14,9 +14,9 @@ const web3 = new Web3(provider);
 const deploy = async () => {
   const accounts = await web3.eth.getAccounts();
 
-  const deployedContract = await new web3.eth.Contract(JSON.parse(interface))
+  const deployedContract = await new web3.eth.Contract(abi)
     .deploy({
-      data: bytecode,
+      data: evm.bytecode.object,
       arguments: ['Hi there!'],
     })
     .send({
